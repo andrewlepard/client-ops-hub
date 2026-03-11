@@ -11,17 +11,12 @@ export async function AuthCard({ searchParams }: AuthCardProps) {
   const message = resolvedSearchParams?.message;
 
   return (
-    <div className="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_80px_rgba(15,23,42,0.08)]">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-        Sign in
-      </p>
-      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
-        Access the protected demo workspace
-      </h2>
-      <p className="mt-3 text-sm leading-6 text-slate-600">
-        Use email and password for the simplest v1 auth flow. New accounts can
-        be created here too.
-      </p>
+    <div className="w-full max-w-md rounded-[2.1rem] border border-white/70 bg-white/92 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur">
+      <div className="border-b border-slate-200 pb-5">
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
+          Sign in to your workspace
+        </h2>
+      </div>
 
       {message ? (
         <div className="mt-6 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm leading-6 text-sky-900">
@@ -38,7 +33,7 @@ export async function AuthCard({ searchParams }: AuthCardProps) {
             required
             type="email"
             name="email"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100"
             placeholder="you@example.com"
           />
         </label>
@@ -52,30 +47,34 @@ export async function AuthCard({ searchParams }: AuthCardProps) {
             minLength={6}
             type="password"
             name="password"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100"
             placeholder="At least 6 characters"
           />
         </label>
 
-        <button
-          type="submit"
-          formAction={signIn}
-          className="w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
-        >
-          Sign in
-        </button>
-        <button
-          type="submit"
-          formAction={signUp}
-          className="w-full rounded-full border border-slate-200 px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
-        >
-          Create account
-        </button>
+        <div className="pt-2">
+          <button
+            type="submit"
+            formAction={signIn}
+            className="w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-slate-800"
+          >
+            Sign in
+          </button>
+          <button
+            type="submit"
+            formAction={signUp}
+            className="mt-3 w-full rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+          >
+            Create account
+          </button>
+        </div>
       </form>
-      <p className="mt-3 text-xs leading-5 text-slate-500">
-        Use the same email and password fields above, then choose either sign
-        in or create account.
-      </p>
+
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+        <p className="text-xs leading-5 text-slate-500">
+          Use the same email and password to sign in or create an account.
+        </p>
+      </div>
     </div>
   );
 }
