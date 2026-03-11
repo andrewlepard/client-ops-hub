@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LeadAiAssistant } from "@/components/leads/lead-ai-assistant";
 import { UpdateLeadForm } from "@/components/leads/update-lead-form";
+import {
+  formatLeadDateTime,
+} from "@/lib/leads";
 import { createClient } from "@/lib/supabase/server";
 
 type LeadDetailPageProps = {
@@ -44,38 +47,16 @@ export default async function LeadDetailPage({
     .limit(1)
     .maybeSingle();
 
-  const detailRows = [
-    { label: "Company", value: lead.company || "—" },
-    { label: "Email", value: lead.email || "—" },
-    { label: "Phone", value: lead.phone || "—" },
-    { label: "Source", value: lead.source || "—" },
-    {
-      label: "Created",
-      value: new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }).format(new Date(lead.created_at)),
-    },
-  ];
-
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
-        <main className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+      <div>
+        <main className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
           <Link
             href="/leads"
-            className="text-sm font-medium text-sky-700 transition hover:text-sky-800"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-800"
           >
             ← Back to leads
           </Link>
-
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Lead Detail
-          </p>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">
-            {lead.name}
-          </h1>
 
           {resolvedSearchParams.message ? (
             <div className="mt-6 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm text-sky-900">
@@ -83,92 +64,111 @@ export default async function LeadDetailPage({
             </div>
           ) : null}
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {detailRows.map((row) => (
-              <div
-                key={row.label}
-                className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5"
-              >
-                <p className="text-sm font-medium text-slate-500">{row.label}</p>
-                <p className="mt-2 text-base font-medium text-slate-900">
-                  {row.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-            <p className="text-sm font-medium text-slate-500">Current status</p>
-            <p className="mt-2 text-base font-medium capitalize text-slate-900">
-              {lead.status}
-            </p>
-          </div>
-
-          <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-            <p className="text-sm font-medium text-slate-500">Notes preview</p>
-            <p className="mt-2 whitespace-pre-wrap text-base leading-7 text-slate-700">
-              {lead.notes || "No notes yet."}
-            </p>
-          </div>
-        </main>
-
-        <aside>
           <UpdateLeadForm lead={lead} />
-        </aside>
+        </main>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <LeadAiAssistant leadId={lead.id} />
 
-        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Latest AI Output
+        <section className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
+            Assistant Output
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-            Most recent saved result
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Most recent suggested content
           </h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            This keeps the latest generated summary and follow-up draft easy to
+            review, present, and copy into the next step of the workflow.
+          </p>
 
           {latestAiGeneration ? (
             <div className="mt-6 space-y-5">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-500">Generated</p>
-                <p className="mt-2 text-sm text-slate-700">
-                  {new Intl.DateTimeFormat("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  }).format(new Date(latestAiGeneration.created_at))}
-                </p>
+              <div className="flex items-center justify-between gap-4 rounded-[1.5rem] border border-slate-200 bg-white px-5 py-4">
+                <div>
+                  <p className="text-sm font-medium text-slate-500">Generated</p>
+                  <p className="mt-1 text-sm text-slate-700">
+                    {formatLeadDateTime(latestAiGeneration.created_at)}
+                  </p>
+                </div>
+                <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                  Saved
+                </span>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-500">Summary</p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
-                  {latestAiGeneration.summary}
-                </p>
+              <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">
+                      Suggested summary
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                      A concise overview of the lead and their current request.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
+                    Summary
+                  </span>
+                </div>
+                <div className="mt-4 rounded-[1.25rem] bg-slate-50 px-4 py-4">
+                  <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                    {latestAiGeneration.summary}
+                  </p>
+                </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-500">
-                  Draft follow-up email
-                </p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
-                  {latestAiGeneration.draft_email}
-                </p>
+              <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">
+                      Suggested follow-up email
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                      A polished draft that feels ready to send with light editing.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
+                    Email
+                  </span>
+                </div>
+                <div className="mt-4 rounded-[1.25rem] bg-slate-50 px-4 py-4">
+                  <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                    {latestAiGeneration.draft_email}
+                  </p>
+                </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-500">Source notes</p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
-                  {latestAiGeneration.raw_notes}
-                </p>
+              <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">
+                      Source notes
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                      The original rough notes used to generate the suggestions.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
+                    Source
+                  </span>
+                </div>
+                <div className="mt-4 rounded-[1.25rem] bg-slate-50 px-4 py-4">
+                  <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                    {latestAiGeneration.raw_notes}
+                  </p>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="mt-6 rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-sm text-slate-500">
-              No AI output yet. Generate one from the form.
+            <div className="mt-6 rounded-[1.75rem] border border-dashed border-slate-300 bg-[linear-gradient(180deg,#f8fafc_0%,#f1f5f9_100%)] px-6 py-12 text-center">
+              <p className="text-base font-medium text-slate-700">
+                No assistant output yet
+              </p>
+              <p className="mt-2 text-sm text-slate-500">
+                Generate a summary and follow-up email from rough notes to turn
+                this into a presentation-ready example.
+              </p>
             </div>
           )}
         </section>

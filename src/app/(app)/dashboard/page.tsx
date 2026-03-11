@@ -1,31 +1,12 @@
 import Link from "next/link";
+import { LeadsTable } from "@/components/leads/leads-table";
 import { createClient } from "@/lib/supabase/server";
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function getStatusStyles(status: string) {
-  const styles: Record<string, string> = {
-    new: "bg-slate-100 text-slate-700",
-    contacted: "bg-sky-100 text-sky-700",
-    qualified: "bg-amber-100 text-amber-700",
-    won: "bg-emerald-100 text-emerald-700",
-    lost: "bg-rose-100 text-rose-700",
-  };
-
-  return styles[status] ?? "bg-slate-100 text-slate-700";
-}
-
 const summaryConfig = [
-  { key: "total", label: "Total Leads" },
-  { key: "contacted", label: "Contacted Leads" },
-  { key: "qualified", label: "Qualified Leads" },
-  { key: "won", label: "Won Leads" },
+  { key: "total", label: "Total Leads", tone: "from-slate-950 to-slate-800" },
+  { key: "contacted", label: "Contacted Leads", tone: "from-sky-600 to-sky-500" },
+  { key: "qualified", label: "Qualified Leads", tone: "from-amber-500 to-orange-400" },
+  { key: "won", label: "Won Leads", tone: "from-emerald-600 to-emerald-500" },
 ] as const;
 
 export default async function DashboardPage() {
@@ -51,23 +32,24 @@ export default async function DashboardPage() {
 
   return (
     <main className="space-y-6">
-      <section className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+      <section className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
               Dashboard
             </p>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">
               Lead snapshot
             </h1>
-            <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600">
-              A simple overview of the signed-in user&apos;s leads.
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+              A quick operating view of your pipeline, built for a clean demo and
+              an easy walkthrough.
             </p>
           </div>
 
           <Link
             href="/leads"
-            className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+            className="inline-flex items-center rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white shadow-[0_10px_24px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-slate-800"
           >
             Create Lead
           </Link>
@@ -77,11 +59,17 @@ export default async function DashboardPage() {
           {summaryConfig.map((item) => (
             <div
               key={item.key}
-              className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5"
+              className="relative overflow-hidden rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5"
             >
+              <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${item.tone}`} />
               <p className="text-sm font-medium text-slate-500">{item.label}</p>
               <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
                 {summary[item.key]}
+              </p>
+              <p className="mt-2 text-sm text-slate-500">
+                {item.key === "total"
+                  ? "All leads in your workspace"
+                  : `Currently marked as ${item.key}`}
               </p>
             </div>
           ))}
@@ -94,63 +82,41 @@ export default async function DashboardPage() {
         ) : null}
       </section>
 
-      <section className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+      <section className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
               Recent Leads
             </p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
               Last 5 created leads
             </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              The newest lead activity for the signed-in account.
+            </p>
           </div>
           <Link
             href="/leads"
-            className="text-sm font-medium text-sky-700 transition hover:text-sky-800"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-800"
           >
             View all leads
           </Link>
         </div>
 
         {recentLeads.length > 0 ? (
-          <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr className="text-left text-sm text-slate-500">
-                  <th className="px-5 py-4 font-medium">Name</th>
-                  <th className="px-5 py-4 font-medium">Company</th>
-                  <th className="px-5 py-4 font-medium">Status</th>
-                  <th className="px-5 py-4 font-medium">Created</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 bg-white text-sm text-slate-700">
-                {recentLeads.map((lead) => (
-                  <tr key={lead.id} className="transition hover:bg-slate-50">
-                    <td className="px-5 py-4">
-                      <Link
-                        href={`/leads/${lead.id}`}
-                        className="font-medium text-slate-950 hover:text-sky-700"
-                      >
-                        {lead.name}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-4">{lead.company || "—"}</td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize ${getStatusStyles(lead.status)}`}
-                      >
-                        {lead.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">{formatDate(lead.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <LeadsTable leads={recentLeads} />
         ) : (
-          <div className="mt-6 rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-sm text-slate-500">
-            No leads yet. Create your first one from the leads page.
+          <div className="mt-6 rounded-[1.75rem] border border-dashed border-slate-300 bg-[linear-gradient(180deg,#f8fafc_0%,#f1f5f9_100%)] px-6 py-12 text-center">
+            <p className="text-base font-medium text-slate-700">No leads yet</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Create your first lead to populate the dashboard and recent activity.
+            </p>
+            <Link
+              href="/leads"
+              className="mt-5 inline-flex rounded-full bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+            >
+              Go to leads
+            </Link>
           </div>
         )}
       </section>

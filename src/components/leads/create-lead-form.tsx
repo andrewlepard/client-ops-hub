@@ -4,16 +4,19 @@ export function CreateLeadForm() {
   return (
     <form
       action={createLead}
-      className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm"
+      className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]"
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
             Create Lead
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
             Add a new lead
           </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            Keep the intake simple. You can refine details later from the lead page.
+          </p>
         </div>
       </div>
 
@@ -26,7 +29,7 @@ export function CreateLeadForm() {
             required
             name="name"
             type="text"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="Jordan Lee"
           />
         </label>
@@ -38,7 +41,7 @@ export function CreateLeadForm() {
           <input
             name="company"
             type="text"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="Lee Home Services"
           />
         </label>
@@ -50,7 +53,7 @@ export function CreateLeadForm() {
           <input
             name="email"
             type="email"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="jordan@example.com"
           />
         </label>
@@ -62,7 +65,7 @@ export function CreateLeadForm() {
           <input
             name="phone"
             type="text"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="(555) 123-4567"
           />
         </label>
@@ -74,7 +77,7 @@ export function CreateLeadForm() {
           <input
             name="source"
             type="text"
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="Referral, website, Instagram, etc."
           />
         </label>
@@ -86,7 +89,7 @@ export function CreateLeadForm() {
           <textarea
             name="notes"
             rows={4}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-sky-300 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
             placeholder="Initial request, service details, budget, timeline..."
           />
         </label>
@@ -94,7 +97,7 @@ export function CreateLeadForm() {
 
       <button
         type="submit"
-        className="mt-6 rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+        className="mt-6 w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-medium text-white shadow-[0_10px_24px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-slate-800"
       >
         Save lead
       </button>

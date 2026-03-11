@@ -64,6 +64,11 @@ export async function updateLead(formData: FormData) {
   }
 
   const leadId = String(formData.get("leadId") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const company = String(formData.get("company") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const source = String(formData.get("source") ?? "").trim();
   const status = getLeadStatus(formData.get("status"));
   const notes = String(formData.get("notes") ?? "").trim();
 
@@ -71,9 +76,18 @@ export async function updateLead(formData: FormData) {
     redirect("/leads?message=Lead not found.");
   }
 
+  if (!name) {
+    redirect(`/leads/${leadId}?message=Name is required.`);
+  }
+
   const { error } = await supabase
     .from("leads")
     .update({
+      name,
+      company: company || null,
+      email: email || null,
+      phone: phone || null,
+      source: source || null,
       status,
       notes: notes || null,
     })

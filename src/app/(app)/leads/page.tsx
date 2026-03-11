@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { CreateLeadForm } from "@/components/leads/create-lead-form";
+import { LeadsTable } from "@/components/leads/leads-table";
 import { createClient } from "@/lib/supabase/server";
 
 type LeadsPageProps = {
@@ -7,26 +7,6 @@ type LeadsPageProps = {
     message?: string;
   }>;
 };
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function getStatusStyles(status: string) {
-  const styles: Record<string, string> = {
-    new: "bg-slate-100 text-slate-700",
-    contacted: "bg-sky-100 text-sky-700",
-    qualified: "bg-amber-100 text-amber-700",
-    won: "bg-emerald-100 text-emerald-700",
-    lost: "bg-rose-100 text-rose-700",
-  };
-
-  return styles[status] ?? "bg-slate-100 text-slate-700";
-}
 
 export default async function LeadsPage({ searchParams }: LeadsPageProps) {
   const resolvedSearchParams = await searchParams;
@@ -43,21 +23,22 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <main className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
+      <main className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700">
           Leads
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-950">
               Your leads
             </h1>
-            <p className="mt-2 text-base leading-7 text-slate-600">
-              Simple lead tracking for the signed-in user only.
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+              A clean lead list for the signed-in user only, with quick access to
+              detail pages and simple pipeline tracking.
             </p>
           </div>
-          <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
-            {leads?.length ?? 0} total
+          <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700">
+            {leads?.length ?? 0} total leads
           </div>
         </div>
 
@@ -74,49 +55,19 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
         ) : null}
 
         {leads && leads.length > 0 ? (
-          <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr className="text-left text-sm text-slate-500">
-                  <th className="px-5 py-4 font-medium">Name</th>
-                  <th className="px-5 py-4 font-medium">Company</th>
-                  <th className="px-5 py-4 font-medium">Status</th>
-                  <th className="px-5 py-4 font-medium">Created</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 bg-white text-sm text-slate-700">
-                {leads.map((lead) => (
-                  <tr key={lead.id} className="transition hover:bg-slate-50">
-                    <td className="px-5 py-4">
-                      <Link
-                        href={`/leads/${lead.id}`}
-                        className="font-medium text-slate-950 hover:text-sky-700"
-                      >
-                        {lead.name}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-4">{lead.company || "—"}</td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize ${getStatusStyles(lead.status)}`}
-                      >
-                        {lead.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">{formatDate(lead.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <LeadsTable leads={leads} />
         ) : (
-          <div className="mt-6 rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-sm text-slate-500">
-            No leads yet. Use the form to add your first lead.
+          <div className="mt-8 rounded-[1.75rem] border border-dashed border-slate-300 bg-[linear-gradient(180deg,#f8fafc_0%,#f1f5f9_100%)] px-6 py-12 text-center">
+            <p className="text-base font-medium text-slate-700">No leads yet</p>
+            <p className="mt-2 text-sm text-slate-500">
+              Use the form on the right to add your first lead and start building
+              the demo pipeline.
+            </p>
           </div>
         )}
       </main>
 
-      <aside>
+      <aside className="xl:pt-8">
         <CreateLeadForm />
       </aside>
     </div>
