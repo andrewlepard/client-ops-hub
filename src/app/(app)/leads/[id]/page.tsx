@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CopyOutputButton } from "@/components/leads/copy-output-button";
 import { LeadAiAssistant } from "@/components/leads/lead-ai-assistant";
 import { UpdateLeadForm } from "@/components/leads/update-lead-form";
 import {
@@ -98,7 +99,7 @@ export default async function LeadDetailPage({
               </div>
 
               <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">
                       Suggested summary
@@ -107,9 +108,15 @@ export default async function LeadDetailPage({
                       A concise overview of the lead and their current request.
                     </p>
                   </div>
-                  <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
-                    Summary
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
+                      Summary
+                    </span>
+                    <CopyOutputButton
+                      label="Summary"
+                      value={latestAiGeneration.summary}
+                    />
+                  </div>
                 </div>
                 <div className="mt-4 rounded-[1.25rem] bg-slate-50 px-4 py-4">
                   <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
@@ -119,7 +126,7 @@ export default async function LeadDetailPage({
               </div>
 
               <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">
                       Suggested follow-up email
@@ -128,9 +135,15 @@ export default async function LeadDetailPage({
                       A polished draft that feels ready to send with light editing.
                     </p>
                   </div>
-                  <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-                    Email
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
+                      Email
+                    </span>
+                    <CopyOutputButton
+                      label="Email"
+                      value={latestAiGeneration.draft_email}
+                    />
+                  </div>
                 </div>
                 <div className="mt-4 rounded-[1.25rem] bg-slate-50 px-4 py-4">
                   <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">

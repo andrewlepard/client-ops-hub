@@ -1,5 +1,6 @@
 import { CreateLeadForm } from "@/components/leads/create-lead-form";
 import { LeadsTable } from "@/components/leads/leads-table";
+import { SeedDemoLeadsButton } from "@/components/leads/seed-demo-leads-button";
 import { createClient } from "@/lib/supabase/server";
 
 type LeadsPageProps = {
@@ -67,7 +68,8 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
         )}
       </main>
 
-      <aside className="xl:pt-8">
+      <aside className="space-y-4 xl:pt-8">
+        <SeedDemoLeadsButton />
         <CreateLeadForm />
       </aside>
     </div>
